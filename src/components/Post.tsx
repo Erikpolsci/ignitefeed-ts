@@ -1,5 +1,5 @@
 import { format, formatDistanceToNow } from 'date-fns';
-import { useState } from 'react';
+import { ChangeEvent, FormEvent, InvalidEvent, useState } from 'react';
 
 
 import { Avatar } from './Avatar'
@@ -7,10 +7,25 @@ import { Comment } from './Comment'
 
 import styles from './Post.module.css'
 
+interface Author {
+    name: string;
+    role: string;
+    avatarUrl: string;
+}
+
+interface Content {
+    type: 'paragraph' | 'link';
+    content: string;
+}
+
+interface PostProps {
+    author: Author;
+    publishedAt: Date;
+    content: Content[];
+}
 
 
-
-export function Post({author, publishedAt, content}) {
+export function Post({author, publishedAt, content}: PostProps) {
     const [comments, setComments] = useState([
        'Post muito bacana'
     ])
@@ -23,7 +38,7 @@ export function Post({author, publishedAt, content}) {
         addSuffix:true
     } )
 
-    function handleCreateNewComment() {
+    function handleCreateNewComment(event: FormEvent ) {
         event.preventDefault()
 
         setComments([...comments, newCommentText]);
@@ -32,18 +47,18 @@ export function Post({author, publishedAt, content}) {
 
     }
 
-    function handleNewCommentChange() {
+    function handleNewCommentChange(event: ChangeEvent<HTMLTextAreaElement>) {
         event.target.setCustomValidity('')
         setNewCommentText(event.target.value);
     }
 
 
-    function handleNewCommentInvalid() {
+    function handleNewCommentInvalid(event: InvalidEvent<HTMLTextAreaElement>) {
         event.target.setCustomValidity('Required Field')
     }
 
 
-    function deleteComment(commentToDelete){
+    function deleteComment(commentToDelete: string){
         const commmentWithoutDeletedOne = comments.filter(comment=>{
             return comment != commentToDelete;
         })
